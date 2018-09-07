@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'sshkit'
+require 'sshkit/dsl'
+
+SSHKit.config.format = :pretty
+SSHKit.config.output_verbosity = :debug
+
+HOST = ENV['LINUX_HOST']
+USER = ENV['LINUX_USER']
+
+# Quick compile and run c file on remote linux server
+class Linux < Thor
+  include SSHKit::DSL
+
+  desc 'exec hello.c', 'linux exec hello.c'
+  def exec(file)
+
+    on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
+      within 'codes' do
+        upload! file, "/home/#{USER}/codes/#{file}"
+        execute :gcc, "-Wall #{file} -o #{File.basename(file, '.c')}"
+        execute "./#{File.basename(file, '.c')}"
+      end
+    end
+
+  end
+
+  desc 'asm hello.c', 'linux asm hello.c'
+  def asm(file)
+
+    on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
+      within 'codes' do
+        upload! file, "/home/#{USER}/codes/#{file}"
+        execute :gcc, "-Wall -S #{file} -o #{File.basename(file, '.c')}.s"
+        execute :cat, "#{File.basename(file, '.c')}.s"
+      end
+    end
+
+  end
+
+  desc 'strace hello.c', 'linux strace hello.c'
+  def strace(file)
+
+    on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
+      within 'codes' do
+        upload! file, "/home/#{USER}/codes/#{file}"
+        execute :gcc, "-Wall #{file} -o #{File.basename(file, '.c')}"
+        execute :strace, "./#{File.basename(file, '.c')}"
+      end
+    end
+
+  end
+
+
+  desc 'py hello.py', 'linux py hello.py'
+  def py(file)
+
+    on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
+      within 'codes' do
+        upload! file, "/home/#{USER}/codes/#{file}"
+        execute :python, "./#{file}"
+      end
+    end
+
+  end
+
+end
+
+Linux.start(ARGV)
