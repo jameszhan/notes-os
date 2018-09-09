@@ -10,6 +10,7 @@ SSHKit.config.output_verbosity = :debug
 HOST = ENV['LINUX_HOST']
 USER = ENV['LINUX_USER']
 
+#
 # Quick compile and run c file on remote linux server
 class Linux < Thor
   include SSHKit::DSL
@@ -20,7 +21,7 @@ class Linux < Thor
     on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
       within 'codes' do
         upload! file, "/home/#{USER}/codes/#{file}"
-        execute :gcc, "-Wall #{file} -o #{File.basename(file, '.c')}"
+        execute :gcc, "-m32 -Wall #{file} -o #{File.basename(file, '.c')}"
         execute "./#{File.basename(file, '.c')}"
       end
     end
@@ -53,6 +54,18 @@ class Linux < Thor
 
   end
 
+  desc 'elf hello.c', 'linux elf hello.c --headers'
+  def elf(file, options="--all")
+
+    on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
+      within 'codes' do
+        upload! file, "/home/#{USER}/codes/#{file}"
+        execute :gcc, "-Wall #{file} -o #{File.basename(file, '.c')}"
+        execute :readelf, "#{options} ./#{File.basename(file, '.c')}"
+      end
+    end
+
+  end
 
   desc 'py hello.py', 'linux py hello.py'
   def py(file)
