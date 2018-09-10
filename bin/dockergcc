@@ -30,9 +30,9 @@ class DockerLinux < Thor
   def elf(file, options='--all')
     obj = File.basename(file, '.c')
     commands = [
-        "gcc -Wall #{file} -o #{obj}",
-        "readelf #{options} ./#{obj}",
-        "rm ./#{obj}"
+      "gcc -Wall #{file} -o #{obj}",
+      "readelf #{options} ./#{obj}",
+      "rm ./#{obj}"
     ]
     puts run_commands(commands, Dir.pwd)
   end
@@ -42,7 +42,6 @@ class DockerLinux < Thor
   def run_commands(commands, pwd)
     `docker run --rm -v #{pwd}:/codes -w /codes gcc:7.3 bash -c "#{commands.join(' && ')}"`
   end
-
 
 end
 
