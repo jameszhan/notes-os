@@ -2,7 +2,7 @@
 require 'thor'
 
 # Quick compile and run c file on remote linux server
-class DockerLinux < Thor
+class DockerGcc < Thor
 
   desc 'exec hello.c', 'dockergcc exec hello.c'
   def exec(file)
@@ -45,4 +45,4 @@ class DockerLinux < Thor
 
 end
 
-DockerLinux.start(ARGV)
+DockerGcc.start(ARGV)

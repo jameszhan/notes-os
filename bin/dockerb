@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+require 'thor'
+
+class DockerRB < Thor
+
+  desc 'exec syscall.rb', 'dockerb exec syscall.rb'
+  def exec(file)
+    puts run_commands("ruby #{file}", Dir.pwd)
+  end
+
+  desc 'exec irb', 'dockerb exec irb'
+  def irb
+    Process.exec 'docker run --rm -it ruby:2.5.1-slim-stretch irb'
+  end
+
+  private
+
+  def run_commands(cmd, pwd)
+    `docker run --rm -v #{pwd}:/codes -w /codes ruby:2.5.1-slim-stretch #{cmd}`
+  end
+
+end
+
+DockerRB.start(ARGV)
+
