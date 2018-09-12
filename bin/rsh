@@ -2,21 +2,6 @@
 
 puts "Shell start with pid #{Process.pid}."
 
-# loop do
-#   print("#{Process.pid} rsh$ ")
-#   cmd = gets.chomp
-#   break if cmd == 'exit'
-#   pid = Process.fork
-#   if pid.nil?
-#     args = cmd.split(' ')
-#     Process.exec(*args)
-#   elsif pid > 0
-#     puts "waitpid #{Process.waitpid(pid, 0)}."
-#   else
-#     puts "Fork error #{Process.pid}"
-#   end
-# end
-
 loop do
   print("#{Process.pid} rsh$ ")
   cmd = gets.chomp
