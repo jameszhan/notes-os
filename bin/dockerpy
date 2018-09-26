@@ -3,15 +3,30 @@ require 'thor'
 
 class DockerPY < Thor
 
+  desc 'bash', 'dockerpy bash'
+  def bash
+    Process.exec build_command('bash', Dir.pwd, '-it -p "5000:5000"')
+  end
+
   desc 'exec syscall.py', 'dockerpy exec syscall.py'
   def exec(file)
-    puts run_commands("python #{file}", Dir.pwd)
+    Process.exec build_command("python #{file}", Dir.pwd, '-t -p "5000:5000"')
+  end
+
+  desc 'once syscall.py', 'dockerpy once syscall.py'
+  def once(file)
+    puts run_command("python #{file}", Dir.pwd, '-p "5000:5000"')
   end
 
   private
 
-  def run_commands(cmd, pwd)
-    `docker run --rm -v #{pwd}:/codes -w /codes python:3.7-slim-stretch #{cmd}`
+  def run_command(cmd, pwd, opts = '')
+    command = build_command(cmd, pwd, opts)
+    `#{command}`
+  end
+
+  def build_command(cmd, pwd, opts = '')
+    "docker run #{opts} --rm -v #{pwd}:/codes -w /codes python:3.7-slim-stretch #{cmd}"
   end
 
 end
