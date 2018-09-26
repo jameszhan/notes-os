@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'thor'
+
+class DockerPY < Thor
+
+  desc 'exec syscall.py', 'dockerpy exec syscall.py'
+  def exec(file)
+    puts run_commands("python #{file}", Dir.pwd)
+  end
+
+  private
+
+  def run_commands(cmd, pwd)
+    `docker run --rm -v #{pwd}:/codes -w /codes python:3.7-slim-stretch #{cmd}`
+  end
+
+end
+
+DockerPY.start(ARGV)

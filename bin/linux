@@ -21,7 +21,7 @@ class Linux < Thor
     on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
       within 'codes' do
         upload! file, "/home/#{USER}/codes/#{file}"
-        execute :gcc, "-m32 -Wall #{file} -o #{File.basename(file, '.c')}"
+        execute :gcc, "-Wall #{file} -o #{File.basename(file, '.c')}"
         execute "./#{File.basename(file, '.c')}"
       end
     end
@@ -69,11 +69,12 @@ class Linux < Thor
 
   desc 'py hello.py', 'linux py hello.py'
   def py(file)
-
+    puts "RUN on #{USER}@#{HOST}"
     on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
       within 'codes' do
         upload! file, "/home/#{USER}/codes/#{file}"
-        execute :python, "./#{file}"
+        execute '~/anaconda3/bin/python', "./#{file}"
+        # execute :python, "./#{file}"
       end
     end
 
