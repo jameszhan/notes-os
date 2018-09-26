@@ -10,7 +10,7 @@ class DockerPY < Thor
 
   desc 'exec syscall.py', 'dockerpy exec syscall.py'
   def exec(file)
-    Process.exec build_command("python #{file}", Dir.pwd, '-t -p "5000:5000"')
+    Process.exec build_command("python #{file}", Dir.pwd, '-it -p "5000:5000"')
   end
 
   desc 'once syscall.py', 'dockerpy once syscall.py'
