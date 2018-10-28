@@ -51,7 +51,7 @@ try:
                 requests[fd] += connections[fd].recv(1024)
                 if EOL1 in requests[fd] or EOL2 in requests[fd]:
                     epoll.modify(fd, select.EPOLLOUT)
-                    print('-'*40 + '\n' + requests[fd].decode()[:-2])
+                    print('-' * 40 + '\n' + requests[fd].decode()[:-2])
             elif event & select.EPOLLOUT:
                 bytes_written = connections[fd].send(responses[fd])
                 responses[fd] = responses[fd][bytes_written:]
