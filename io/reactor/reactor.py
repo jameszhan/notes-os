@@ -1,5 +1,7 @@
 import socket
 import select
+import os
+
 from session import Session
 
 class Reactor(object):
@@ -31,7 +33,12 @@ class Reactor(object):
                         session = connections[fd]
                         request = session.read()
                         if len(request) > 0:
-                            self.handle(session, request)
+                            child_pid = os.fork()
+                            if child_pid == 0:
+                                self.handle(session, request)
+                            else:
+                                print("fork {} to handle request {}.".format(child_pid, request))
+                                os.waitpid(child_pid, 0)
                         else:
                             session.close()
                     elif event & select.EPOLLOUT:
