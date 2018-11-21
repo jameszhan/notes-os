@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'find'
+require_relative 'runner'
+
+# Synchronize the git repo.
+class GitRemote < Thor
+
+  desc 'ls .', 'synchronize the git remote upstream repository'
+  def ls(dir = '.')
+    if Dir.exist?('.git')
+      remotes = run 'git remote -v'
+      say "check: #{remotes} "
+    else
+      traverse_folder(dir) do |path|
+        say "\n- #{path}", :green
+        remotes = `git remote -v`
+        say "\t- #{remotes.split("\n").join("\n\t- ")}", :yellow
+      end
+    end
+  end
+
+  desc 'sync upstream', 'synchronize the git remote upstream repository'
+  def sync(repository, dir = '.')
+    if Dir.exist?('.git')
+      send("synchronize_#{repository}")
+    else
+      traverse_folder(dir) do |path|
+        say "synchronize git repo #{path}", :green
+        if `git remote -v` =~ /upstream/
+          send("synchronize_#{repository}")
+        else
+          say "IGNORE #{path} doesn't has UPSTREAM", :yellow
+        end
+      end
+    end
+  end
+
+  desc 'du', 'display disk usage statistics'
+  def du(dir = '.')
+    traverse_folder(dir) do |path|
+      du = `du -sh .`.chomp
+      say "#{du}#{path}", :green
+    end
+  end
+
+  private
+
+  def traverse_folder(root, &block)
+    Find.find(root) do |path|
+      next unless File.directory?(path)
+      bn = File.basename(path)
+      if path.length > 1 && (bn[0] == '.' || bn[0] == '@')
+        Find.prune
+      elsif Dir.exist?(File.expand_path('.git', path))
+        run_in_path(path, &block)
+        Find.prune
+      else
+        say "IGNORE directory #{path}", :red
+      end
+    end
+  end
+
+  def run_in_path(path)
+    pwd = Dir.pwd
+    begin
+      Dir.chdir(path)
+      yield path
+    ensure
+      Dir.chdir(pwd)
+    end
+  end
+
+  def synchronize_upstream
+    Runner.batch do
+      run 'git pull'
+      run 'git fetch upstream'
+      run 'git checkout master'
+      run 'git merge upstream/master'
+      run 'git push'
+    end
+  end
+
+  def synchronize_origin
+    Runner.batch do
+      run 'git pull'
+    end
+  end
+end
+
+GitRemote.start(ARGV)
