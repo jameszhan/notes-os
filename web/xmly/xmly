@@ -17,7 +17,9 @@ class Xmly < Thor
     album_configs = YAML.load_file(albums_config_file)
     album_configs.each do |album|
       say "Begin to download album #{album}", :green
-      downloader = AlbumDownloader.new(album['id'], album['category'], ENV['XMLY_UID'], ENV['XMLY_TOKEN'], "#{storage_dir}/#{album['title']}")
+      target_dir = "#{storage_dir}/#{album['title']}"
+      Dir.mkdir(target_dir) unless Dir.exist?(target_dir)
+      downloader = AlbumDownloader.new(album['id'], album['category'], ENV['XMLY_UID'], ENV['XMLY_TOKEN'], target_dir)
       downloader.download
       say "Finish to download album #{album}", :yellow
     end
