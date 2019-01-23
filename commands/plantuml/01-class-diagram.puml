@@ -1,0 +1,44 @@
+@startuml Company
+class Company {
+
+}
+class Department {
+  name : Name
+}
+class Office {
+  address : String
+  phone : Number
+}
+class Headquarters {
+
+}
+class Person {
+  name : Name
+  employeeID : Integer
+  title : String
+  getPhoto() : Photo
+  getPhone() : Number
+  getContactInformation() : ContactInformation
+  getPersonalRecords() : PersonnelRecord
+}
+class ContactInformation {
+  address : String
+}
+class PersonnelRecord {
+  taxID
+  employmentHistory
+  salary
+}
+
+Company "1" *-do- "1..*" Department
+Company "1" *-do- "1..*" Office
+'(Department, Office) -up-* Company
+Department "*" -ri- "*" Office : Location >
+Department "*" --* "0..1" Department
+Office <|-do- Headquarters
+Department "*" -do- "member 1..*" Person
+Person "1 {subsets member}" -u- "*" Department : manager
+Person .ri.> ContactInformation
+Person ..> PersonnelRecord
+PersonnelRecord -() ISecureInformation
+@enduml
