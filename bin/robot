@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'faraday'
+require 'json'
+require_relative 'runner'
+
+class Robot < Thor
+    desc 'text "Hello World"', 'Send message to dingtalk Robot'
+    option :webhook_token, default: '/robot/send?access_token=38f00f68e8b29b4727d153403c44a438f7930f16b5793749675988d15e551847'
+    def text(msg)
+        envelope = {
+            msgtype: "text",
+            at: {
+                isAtAll: true
+            },
+            text: {
+                "content": msg            
+            }
+        } 
+        resp = send(envelope)
+        puts resp.body
+    end
+
+    desc 'markdown "Hello" test.md', 'Send message to dingtalk Robot'
+    option :webhook_token, default: '/robot/send?access_token=38f00f68e8b29b4727d153403c44a438f7930f16b5793749675988d15e551847'
+    def markdown(title, file)
+        envelope = {
+            at: {
+                isAtAll: true
+            },
+            msgtype: "markdown",
+            markdown: {
+                "title": title,
+                "text": File.read(file)          
+            }
+        }   
+        puts send(envelope) 
+    end
+
+    private
+    def send(envelope) 
+        connection.post do |req|
+            req.url options[:webhook_token]
+            req.headers['Content-Type'] = 'application/json; charset=utf-8'
+            req.body = envelope.to_json
+        end
+    end
+    def connection
+        @conn ||= Faraday.new(url: 'https://oapi.dingtalk.com') do |faraday|
+            faraday.request :url_encoded # form-encode POST params
+            faraday.response :logger # log requests to STDOUT
+            faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
+        end
+    end
+end
+
+Robot.start(ARGV)

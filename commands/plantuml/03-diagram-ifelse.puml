@@ -1,0 +1,12 @@
+@startuml AliceBob
+(*) --> "Initialisation"
+
+if " Some Test" then
+    -->[ture] "Some Activity"
+    --> "Another Activity"
+-right-> (*)
+else
+    ->[false] "Something else"
+    -->[Ending process] (*)
+endif
+@enduml

@@ -1,3 +1,7 @@
+# 喜马拉雅批量下载工具
+
+长期维护版本可以参考：[ximalaya-downlaod](https://github.com/jameszhan/xmly-download)
+
 ### 依赖环境
 
 本工具依赖于 `Ruby` 执行环境。

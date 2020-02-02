@@ -1,0 +1,5 @@
+PUT /api/users/5 HTTP/1.0
+Content-Type: application/json
+Content-Length: 30
+
+{"name":"James Zhan","age":18}
