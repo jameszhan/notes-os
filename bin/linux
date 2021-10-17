@@ -73,7 +73,7 @@ class Linux < Thor
     on "#{USER}@#{HOST}", in: :sequence, wait: 5 do
       within 'codes' do
         upload! file, "/home/#{USER}/codes/#{file}"
-        execute '~/anaconda3/bin/python', "./#{file}"
+        execute '/opt/local/conda/bin/python', "./#{file}"
         # execute :python, "./#{file}"
       end
     end

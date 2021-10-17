@@ -1,4 +1,4 @@
-# axargs Usage
+# xargs Usage
 
 **快速实验**
 
